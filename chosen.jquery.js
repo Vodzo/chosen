@@ -349,7 +349,8 @@
       var escapedSearchText, highlightRegex, option, regex, results, results_group, searchText, startpos, text, _i, _len, _ref;
       this.no_results_clear();
       results = 0;
-      searchText = this.get_search_text();
+	  //JNZ
+      searchText = this.strip_diacritics(this.get_search_text());
       escapedSearchText = searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
       regex = this.get_search_regex(escapedSearchText);
       highlightRegex = this.get_highlight_regex(escapedSearchText);
@@ -372,13 +373,15 @@
           }
           option.search_text = option.group ? option.label : option.html;
           if (!(option.group && !this.group_search)) {
-            option.search_match = this.search_string_match(option.search_text, regex);
+			//JNZ
+			option.search_match = this.search_string_match(this.strip_diacritics(option.search_text), regex);
             if (option.search_match && !option.group) {
               results += 1;
             }
             if (option.search_match) {
               if (searchText.length) {
-                startpos = option.search_text.search(highlightRegex);
+				//JNZ
+				startpos = this.strip_diacritics(option.search_text).search(highlightRegex);
                 text = option.search_text.substr(0, startpos + searchText.length) + '</em>' + option.search_text.substr(startpos + searchText.length);
                 option.search_text = text.substr(0, startpos) + '<em>' + text.substr(startpos);
               }
@@ -400,6 +403,26 @@
         return this.winnow_results_set_highlight();
       }
     };
+	
+	// strip rs diacritics from string
+	AbstractChosen.prototype.strip_diacritics= function(string) {
+	  var 
+		translationTable= [
+		  // input with diacritics - add your characters if necessary
+		  "šŠđĐžŽčČćĆ",
+		  // stripped output
+		  "sSdDzZcCcCs",
+		],
+		output= '';
+
+	  // scan through whole string
+	  for (var i= 0; i < string.length; i++) {
+		var charPosition= translationTable[0].indexOf(string[i]);
+		output+= charPosition == -1 ? string[i] : translationTable[1][charPosition];
+	  }
+
+	  return output;
+	}
 
     AbstractChosen.prototype.get_search_regex = function(escaped_search_string) {
       var regex_anchor, regex_flag;
@@ -1307,3 +1330,4 @@
   })(AbstractChosen);
 
 }).call(this);
+
