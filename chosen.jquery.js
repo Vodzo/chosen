@@ -411,7 +411,7 @@
 		  // input with diacritics - add your characters if necessary
 		  "šŠđĐžŽčČćĆ",
 		  // stripped output
-		  "sSdDzZcCcCs",
+		  "sSdDzZcCcC",
 		],
 		output= '';
 
