@@ -132,6 +132,7 @@
       this.include_group_label_in_selected = this.options.include_group_label_in_selected || false;
       this.max_shown_results = this.options.max_shown_results || Number.POSITIVE_INFINITY;
       this.case_sensitive_search = this.options.case_sensitive_search || false;
+	  this.keep_text = this.options.keep_text || false;
       return this.hide_results_on_select = this.options.hide_results_on_select != null ? this.options.hide_results_on_select : true;
     };
 
@@ -1169,7 +1170,9 @@
         item.selected = true;
         this.form_field.options[item.options_index].selected = true;
         this.selected_option_count = null;
-        this.search_field.val("");
+		if(!this.keep_text) {
+			this.search_field.val("");
+		}
         if (this.is_multiple) {
           this.choice_build(item);
         } else {
